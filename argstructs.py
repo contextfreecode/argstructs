@@ -3,30 +3,30 @@ import typing as tp
 
 
 # @dc.dataclass
-# class ListInts:
+# class ListingArgs:
 #     items: list[int]
 #     sep: str = ", "
 #     ends: str = "[]"
 
 
-# class ListInts(tp.TypedDict):
+# class ListingArgs(tp.TypedDict):
 #     items: list[int]
 #     sep: str
 #     ends: str
 
 
-class ListInts(tp.NamedTuple):
-    items: list[int]
+class ListingArgs(tp.NamedTuple):
+    items: list
     sep: str
     ends: str
 
 
-# ListInts = tuple[list[int], str, str]
+# ListingArgs = tuple[list, str, str]
 
 
-# def list_ints(sep=", ", *items: int, ends: str) -> str:
-# def list_ints(*args: ListInts) -> str:
-def list_ints(items: list[int], sep: str, ends: str) -> str:
+# def listing(sep=", ", *items: int, ends: str) -> str:
+# def listing(*args: ListingArgs) -> str:
+def listing(items: list, sep: str, ends: str) -> str:
     # items, sep, ends = args
     begin = ends[:1]
     end = ends[1:2]
@@ -35,18 +35,18 @@ def list_ints(items: list[int], sep: str, ends: str) -> str:
 
 
 def main():
-    text = list_ints([1, 2, 3], ", ", "[]")
-    # text = list_ints ([1, 2, 3], ", ", "[]")
-    # text = list_ints(*([1, 2, 3], ", ", "[]"))
-    # text = list_ints(*tp.cast(ListInts, ([1, 2, 3], ", ", "[]")))
-    # text = list_ints(*ListInts([1, 2, 3], ", ", "[]"))
-    # text = list_ints(items=[1, 2, 3], sep=", ", ends="[]")
-    # text = list_ints(*ListInts(items=[1, 2, 3], sep=", ", ends="[]"))
-    # text = list_ints(**{"items": [1, 2, 3], "sep": ", ", "ends": "[]"})
-    # text = list_ints(**dict(items=[1, 2, 3], sep=", ", ends="[]"))
-    # text = list_ints(**ListInts(items=[1, 2, 3], sep=", ", ends="[]")._asdict())
-    # text = list_ints(**ListInts(items=[1, 2, 3], sep=", ", ends="[]"))
-    # text = list_ints(**ListInts(items=[1, 2, 3], sep=", ", ends="[]").__dict__)
+    text = listing([1, 2, 3], ", ", "[]")
+    # text = listing ([1, 2, 3], ", ", "[]")
+    # text = listing(*([1, 2, 3], ", ", "[]"))
+    # text = listing(*tp.cast(ListingArgs, ([1, 2, 3], ", ", "[]")))
+    # text = listing(*ListingArgs([1, 2, 3], ", ", "[]"))
+    # text = listing(items=[1, 2, 3], sep=", ", ends="[]")
+    # text = listing(*ListingArgs(items=[1, 2, 3], sep=", ", ends="[]"))
+    # text = listing(**{"items": [1, 2, 3], "sep": ", ", "ends": "[]"})
+    # text = listing(**dict(items=[1, 2, 3], sep=", ", ends="[]"))
+    # text = listing(**ListingArgs(items=[1, 2, 3], sep=", ", ends="[]")._asdict())
+    # text = listing(**ListingArgs(items=[1, 2, 3], sep=", ", ends="[]"))
+    # text = listing(**ListingArgs(items=[1, 2, 3], sep=", ", ends="[]").__dict__)
     print(text)
 
 
