@@ -15,16 +15,16 @@ import typing as tp
 #     ends: str
 
 
-class ListingArgs(tp.NamedTuple):
-    items: list
-    sep: str
-    ends: str
+# class ListingArgs(tp.NamedTuple):
+#     items: list
+#     sep: str
+#     ends: str
 
 
 # ListingArgs = tuple[list, str, str]
 
 
-# def listing(sep=", ", *items: int, ends: str) -> str:
+# def listing(sep=", ", *items: int, ends: str = "[]") -> str:
 # def listing(*args: ListingArgs) -> str:
 def listing(items: list, sep: str, ends: str) -> str:
     # items, sep, ends = args
@@ -47,6 +47,9 @@ def main():
     # text = listing(**ListingArgs(items=[1, 2, 3], sep=", ", ends="[]")._asdict())
     # text = listing(**ListingArgs(items=[1, 2, 3], sep=", ", ends="[]"))
     # text = listing(**ListingArgs(items=[1, 2, 3], sep=", ", ends="[]").__dict__)
+    # text = listing(", ", 1, 2, 3, ends="[]")
+    # text = listing(sep=", ", 1, 2, 3, ends="[]")
+    # text = listing(1, 2, 3, sep=", ", ends="[]")
     print(text)
 
 

@@ -14,6 +14,7 @@
 // }
 // const listIntDefaults = Object.freeze({sep: ", ", ends: "[]"});
 // type ListingArgs = {items: unknown[], sep: string, ends: string};
+// type NumberArray = number[];  // or Array<number>
 type ListingArgs = [items: unknown[], sep: string, ends: string];
 
 
