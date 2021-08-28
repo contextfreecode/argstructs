@@ -34,6 +34,18 @@ auto listing(std::initializer_list<Item> items, std::string_view sep = ", ",
   return listing(std::span(items.begin(), items.end()), sep, ends);
 }
 
+// template <typename Item>
+// struct ListingArgs {
+//   std::string_view sep = ", ";
+//   std::string_view end = "[]";
+//   std::initializer_list<Item> items;
+// };
+
+// template <typename Item>
+// auto listing(const ListingArgs<Item>& args) -> std::string {
+//   return listing(args.items, args.sep, args.end);
+// }
+
 auto join(std::stringstream& buffer, std::string_view sep) -> void {}
 
 template <typename Item, typename... Items>
@@ -87,24 +99,12 @@ auto listing(std::string_view sep, std::string_view ends, const Items&... items)
 //   return listing(args.sep, args.end, args.items);
 // }
 
-template <typename Item>
-struct ListingArgs {
-  std::string_view sep = ", ";
-  std::string_view end = "[]";
-  std::initializer_list<Item> items;
-};
-
-template <typename Item>
-auto listing(const ListingArgs<Item>& args) -> std::string {
-  return listing(args.items, args.sep, args.end);
-}
-
 auto main() -> int {
-  // auto text = listing({1, 2, 3}, ", ", "[]");
+  auto text = listing({1, 2, 3}, ", ", "[]");
+  // auto text = listing(ListingArgs{.items = {1, 2, 3}});
   // auto text = listing(", ", "[]", 1, 2, 3, "last");
   // auto text = listing(", ", "[]");
   // auto text = listing(ListingArgs{", ", "[]", 1, 2, 3, "last"});
   // auto text = listing(ListingArgs{.items = std::tuple{1, 2, 3}});
-  auto text = listing(ListingArgs{.items = {1, 2, 3}});
   std::cout << text << "\n";
 }
