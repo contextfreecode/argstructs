@@ -19,8 +19,8 @@ listing items sep ends =
         begin = take 1 ends
         end = take 1 $ tail ends
 
-main =
-    putStrLn $ listing [1, 2, 3] ", " "[]"
-    -- putStrLn $ listing ([1, 2, 3], ", ", "[]")
-    -- putStrLn $ listing ListingArgs {items=[1, 2, 3], sep=", ", ends="[]"}
-    -- putStrLn $ listing listingArgsDefaults {items=[1, 2, 3]}
+main = putStrLn $
+    listing [1, 2, 3] ", " "[]"
+    -- listing ([1, 2, 3], ", ", "[]")
+    -- listing ListingArgs {items=[1, 2, 3], sep=", ", ends="[]"}
+    -- listing listingArgsDefaults {items=[1, 2, 3]}
