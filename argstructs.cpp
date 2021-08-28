@@ -75,16 +75,28 @@ auto listing(std::string_view sep, std::string_view ends, const Items&... items)
 //   return std::apply([](auto&... args) { return listing(args...); }, args);
 // }
 
-template <typename... Items>
+// template <typename... Items>
+// struct ListingArgs {
+//   std::string_view sep = ", ";
+//   std::string_view end = "[]";
+//   std::tuple<Items...> items;
+// };
+
+// template <typename... Items>
+// auto listing(const ListingArgs<Items...>& args) -> std::string {
+//   return listing(args.sep, args.end, args.items);
+// }
+
+template <typename Item>
 struct ListingArgs {
   std::string_view sep = ", ";
   std::string_view end = "[]";
-  std::tuple<Items...> items;
+  std::initializer_list<Item> items;
 };
 
-template <typename... Items>
-auto listing(const ListingArgs<Items...>& args) -> std::string {
-  return listing(args.sep, args.end, args.items);
+template <typename Item>
+auto listing(const ListingArgs<Item>& args) -> std::string {
+  return listing(args.items, args.sep, args.end);
 }
 
 auto main() -> int {
@@ -92,6 +104,7 @@ auto main() -> int {
   // auto text = listing(", ", "[]", 1, 2, 3, "last");
   // auto text = listing(", ", "[]");
   // auto text = listing(ListingArgs{", ", "[]", 1, 2, 3, "last"});
-  auto text = listing(ListingArgs{.items = std::tuple{1, 2, 3}});
+  // auto text = listing(ListingArgs{.items = std::tuple{1, 2, 3}});
+  auto text = listing(ListingArgs{.items = {1, 2, 3}});
   std::cout << text << "\n";
 }
