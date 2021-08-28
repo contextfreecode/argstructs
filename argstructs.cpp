@@ -34,11 +34,21 @@ auto listing(std::initializer_list<Item> items, std::string_view sep = ", ",
   return listing(std::span(items.begin(), items.end()), sep, ends);
 }
 
+template <typename Item>
+using ListingArgs =
+    std::tuple<std::initializer_list<Item>, std::string_view, std::string_view>;
+
+template <typename Item>
+auto listing(const ListingArgs<Item> args) -> std::string {
+  auto [items, sep, ends] = args;
+  return listing(items, sep, ends);
+}
+
 // template <typename Item>
 // struct ListingArgs {
+//   std::initializer_list<Item> items;
 //   std::string_view sep = ", ";
 //   std::string_view end = "[]";
-//   std::initializer_list<Item> items;
 // };
 
 // template <typename Item>
@@ -88,6 +98,16 @@ auto listing(std::string_view sep, std::string_view ends, const Items&... items)
 // }
 
 // template <typename... Items>
+// using ListingArgs =
+//     std::tuple<std::string_view, std::string_view, std::tuple<Items...>>;
+
+// template <typename... Items>
+// auto listing(const ListingArgs<Items...>& args) -> std::string {
+//   auto [sep, ends, items] = args;
+//   return listing(sep, ends, items);
+// }
+
+// template <typename... Items>
 // struct ListingArgs {
 //   std::string_view sep = ", ";
 //   std::string_view end = "[]";
@@ -100,11 +120,15 @@ auto listing(std::string_view sep, std::string_view ends, const Items&... items)
 // }
 
 auto main() -> int {
-  auto text = listing({1, 2, 3}, ", ", "[]");
+  auto text = listing({1, 2, 3}, " ", "()");
+  // auto text = listing({1, 2, 3});
+  // auto text = listing(ListingArgs{{1, 2, 3}, " ", "()"});
+  // auto text = listing(ListingArgs{{1, 2, 3}});
   // auto text = listing(ListingArgs{.items = {1, 2, 3}});
-  // auto text = listing(", ", "[]", 1, 2, 3, "last");
-  // auto text = listing(", ", "[]");
-  // auto text = listing(ListingArgs{", ", "[]", 1, 2, 3, "last"});
+  // auto text = listing(" ", "()", 1, 2, 3, "last");
+  // auto text = listing(" ", "()");
+  // auto text = listing(ListingArgs{" ", "()", 1, 2, 3, "last"});
+  // auto text = listing(ListingArgs{" ", "()", std::tuple{1, 2, 3}});
   // auto text = listing(ListingArgs{.items = std::tuple{1, 2, 3}});
   std::cout << text << "\n";
 }
