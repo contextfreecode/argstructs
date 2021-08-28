@@ -51,9 +51,18 @@ auto listing(std::string_view sep, std::string_view ends, const Items&... items)
   // return listing({items...}, sep, ends);
 }
 
+template <typename... Items>
+using ListingArgs = std::tuple<std::string_view, std::string_view, Items...>;
+
+template <typename... Items>
+auto listing(const ListingArgs<Items...>& args) -> std::string {
+  return std::apply([](auto&... args) { return listing(args...); }, args);
+}
+
 auto main() -> int {
-  auto text = listing({1, 2, 3}, ", ", "[]");
+  // auto text = listing({1, 2, 3}, ", ", "[]");
   // auto text = listing(", ", "[]", 1, 2, 3, "last");
   // auto text = listing(", ", "[]");
+  auto text = listing(ListingArgs{", ", "[]", 1, 2, 3});
   std::cout << text << "\n";
 }
