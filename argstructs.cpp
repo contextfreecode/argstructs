@@ -1,12 +1,13 @@
 #include <initializer_list>
 #include <iostream>
 #include <ranges>
+#include <span>
 #include <sstream>
 #include <string_view>
 
 template <typename Item>
-auto listing(std::initializer_list<Item> items, std::string_view sep,
-             std::string_view ends) -> std::string {
+auto listing(std::span<Item> items, std::string_view sep, std::string_view ends)
+    -> std::string {
   auto buffer = std::stringstream();
   auto begin = ends.size() ? ends.substr(0, 1) : "";
   auto end = ends.size() > 1 ? ends.substr(1, 1) : "";
@@ -18,7 +19,14 @@ auto listing(std::initializer_list<Item> items, std::string_view sep,
     }
   }
   buffer << end;
+  std::span(items.begin(), items.end());
   return buffer.str();
+}
+
+template <typename Item>
+auto listing(std::initializer_list<Item> items, std::string_view sep,
+             std::string_view ends) -> std::string {
+  return listing(std::span(items.begin(), items.end()), sep, ends);
 }
 
 auto join(std::stringstream& buffer, std::string_view sep) -> void {}
