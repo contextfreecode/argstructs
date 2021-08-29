@@ -1,30 +1,33 @@
-{-# LANGUAGE FlexibleContexts, FlexibleInstances, NamedFieldPuns, UndecidableInstances #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 import Data.List
 import Text.Printf
 
 class Show' a where
-    show' :: a -> String
+  show' :: a -> String
 
 instance Show a => Show' a where
-    show' = show
+  show' = show
 
 instance {-# OVERLAPS #-} Show' String where
-    show' = id
+  show' = id
 
 class Join r where
-    join :: (Show a, Show' a) => String -> a -> r
+  join :: (Show a, Show' a) => String -> a -> r
 
 instance Join String where
-    join sep = show'
+  join sep = show'
 
 instance (Show a, Show' a, Join r) => Join (a -> r) where
-    join sep acc x = join sep (show' acc ++ sep ++ show x)
+  join sep acc x = join sep (show' acc ++ sep ++ show x)
 
 data ListingArgs a = ListingArgs {items :: [a], sep :: String, ends :: String}
 
 listingArgsDefaults :: ListingArgs a
-listingArgsDefaults = ListingArgs {items=[], sep=", ", ends="[]"}
+listingArgsDefaults = ListingArgs {items = [], sep = ", ", ends = "[]"}
 
 -- listing :: Show a => ListingArgs a -> String
 -- listing ListingArgs {items, sep, ends} =
@@ -32,12 +35,13 @@ listingArgsDefaults = ListingArgs {items=[], sep=", ", ends="[]"}
 -- listing (items, sep, ends) =
 -- listing :: Show a => [a] -> String -> String -> String
 listing items sep ends =
-    printf "%s%s%s" begin (intercalate sep $ map show items) end
-    where
-        begin = take 1 ends
-        end = take 1 $ drop 1 ends
+  printf "%s%s%s" begin (intercalate sep $ map show items) end
+  where
+    begin = take 1 ends
+    end = take 1 $ drop 1 ends
 
-main = putStrLn $
+main =
+  putStrLn $
     listing [1, 2, 3] ";" "[]"
     -- listing ([1, 2, 3], " ", "()")
     -- listing ListingArgs {items=[1, 2, 3], sep=" : ", ends=""}
