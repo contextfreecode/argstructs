@@ -9,8 +9,9 @@ class Join r where
 instance Join String where
     join sep item = show item
 
--- instance (Show a) => Join (a -> r) where
---     join sep item = join . ((show item) ++ sep ++)
+-- instance (Show a, Join r) => Join (a -> r) where
+--     -- join sep item = \x -> (show item) ++ sep ++ (join sep x)
+--     join sep item = \x -> (join sep x) ++ sep ++ (show item)
 
 data ListingArgs a = ListingArgs {items :: [a], sep :: String, ends :: String}
 
@@ -26,10 +27,10 @@ listing items sep ends =
     printf "%s%s%s" begin (intercalate sep $ map show items) end
     where
         begin = take 1 ends
-        end = take 1 $ tail ends
+        end = drop 1 ends
 
 main = putStrLn $
-    listing [1, 2, 3] ";" "()"
-    -- listing ([1, 2, 3], ", ", "[]")
-    -- listing ListingArgs {items=[1, 2, 3], sep=", ", ends="[]"}
+    listing [1, 2, 3] ";" "[]"
+    -- listing ([1, 2, 3], " ", "()")
+    -- listing ListingArgs {items=[1, 2, 3], sep=" : ", ends=""}
     -- listing listingArgsDefaults {items=[1, 2, 3]}
