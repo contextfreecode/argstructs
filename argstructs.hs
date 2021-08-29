@@ -1,17 +1,18 @@
-{-# LANGUAGE FlexibleInstances, NamedFieldPuns, OverlappingInstances #-}
+{-# LANGUAGE FlexibleInstances, NamedFieldPuns #-}
 
 import Data.List
 import Text.Printf
 
 class Join r where
-    join :: Show a => String -> a -> r
+    -- join :: Show a => a -> r
+    join :: String -> r
 
 instance Join String where
-    join sep item = show item
+    join = id
 
--- instance (Show a, Join r) => Join (a -> r) where
---     -- join sep item = \x -> (show item) ++ sep ++ (join sep x)
---     join sep item = \x -> (join sep x) ++ sep ++ (show item)
+instance Join r => Join (String -> r) where
+    -- join sep acc x = join sep (acc ++ sep ++ x)
+    join acc x = join (acc ++ " " ++ x)
 
 data ListingArgs a = ListingArgs {items :: [a], sep :: String, ends :: String}
 
@@ -30,7 +31,8 @@ listing items sep ends =
         end = drop 1 ends
 
 main = putStrLn $
-    listing [1, 2, 3] ";" "[]"
+    join ";" "a" "b"
+    -- listing [1, 2, 3] ";" "[]"
     -- listing ([1, 2, 3], " ", "()")
     -- listing ListingArgs {items=[1, 2, 3], sep=" : ", ends=""}
     -- listing listingArgsDefaults {items=[1, 2, 3]}
