@@ -1,18 +1,25 @@
-{-# LANGUAGE FlexibleInstances, NamedFieldPuns #-}
+{-# LANGUAGE FlexibleInstances, NamedFieldPuns, UndecidableInstances #-}
 
 import Data.List
 import Text.Printf
 
+class Show' a where
+    show' :: a -> String
+
+instance Show a => Show' a where
+    show' = show
+
+instance {-# OVERLAPS #-} Show' String where
+    show' = id
+
 class Join r where
-    -- join :: Show a => a -> r
-    join :: String -> r
+    join :: (Show' a) => String -> a -> r
 
 instance Join String where
-    join = id
+    join sep = show'
 
-instance Join r => Join (String -> r) where
-    -- join sep acc x = join sep (acc ++ sep ++ x)
-    join acc x = join (acc ++ " " ++ x)
+instance (Show' a, Join r) => Join (a -> r) where
+    join sep acc x = join sep (show' acc ++ sep ++ show' x)
 
 data ListingArgs a = ListingArgs {items :: [a], sep :: String, ends :: String}
 
@@ -31,8 +38,8 @@ listing items sep ends =
         end = drop 1 ends
 
 main = putStrLn $
-    join ";" "a" "b"
     -- listing [1, 2, 3] ";" "[]"
     -- listing ([1, 2, 3], " ", "()")
     -- listing ListingArgs {items=[1, 2, 3], sep=" : ", ends=""}
     -- listing listingArgsDefaults {items=[1, 2, 3]}
+    join ";" (1 :: Int) (2 :: Int) (3 :: Int) "last"
