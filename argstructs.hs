@@ -16,7 +16,7 @@ instance {-# OVERLAPS #-} Show' String where
   show' = id
 
 class Join r where
-  listing' :: (Show a, Show' a) => String -> String -> a -> r
+  listing' :: (Show' a) => String -> String -> a -> r
 
 instance Join String where
   listing' sep ends x =
@@ -25,8 +25,8 @@ instance Join String where
       begin = take 1 ends
       end = take 1 $ drop 1 ends
 
-instance (Show a, Show' a, Join r) => Join (a -> r) where
-  listing' sep ends acc x = listing' sep ends (show' acc ++ sep ++ show x)
+instance (Show' a, Join r) => Join (a -> r) where
+  listing' sep ends acc x = listing' sep ends (show' acc ++ sep ++ show' x)
 
 listing4 sep ends (a, b, c, d) = listing' sep ends a b c d
 
@@ -53,10 +53,10 @@ listing items sep ends =
 main =
   putStrLn text
   where
-    text = listing [1, 2, 3] ";" "[]"
+    -- text = listing [1, 2, 3] ";" "[]"
     -- text = listing ([1, 2, 3], " ", "()")
     -- text = listing ListingArgs {items=[1, 2, 3], sep=" : ", ends=""}
     -- text = listing listingArgsDefaults {items=[1, 2, 3]}
-    -- text = listing' ";" "<>" (1 :: Int) (2 :: Int) (3 :: Int) "last"
+    text = listing' ";" "<>" (1 :: Int) (2 :: Int) (3 :: Int) "last"
     -- text = listing4 ";" "<>" ((1 :: Int), (2 :: Int), (3 :: Int), "last")
     -- text = listing4' (";", "<>", (1 :: Int), (2 :: Int), (3 :: Int), "last")
