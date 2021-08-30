@@ -16,13 +16,23 @@ instance {-# OVERLAPS #-} Show' String where
   show' = id
 
 class Join r where
-  join :: (Show a, Show' a) => String -> a -> r
+  listing' :: (Show a, Show' a) => String -> String -> a -> r
 
 instance Join String where
-  join sep = show'
+  listing' sep ends x =
+    begin ++ show' x ++ end
+    where
+      begin = take 1 ends
+      end = take 1 $ drop 1 ends
 
 instance (Show a, Show' a, Join r) => Join (a -> r) where
-  join sep acc x = join sep (show' acc ++ sep ++ show x)
+  listing' sep ends acc x = listing' sep ends (show' acc ++ sep ++ show x)
+
+listing4 sep ends (a, b, c, d) = listing' sep ends a b c d
+
+uncurry6 fun (a, b, c, d, e, f) = fun a b c d e f
+
+-- listing4' = uncurry6 listing'
 
 data ListingArgs a = ListingArgs {items :: [a], sep :: String, ends :: String}
 
@@ -41,9 +51,12 @@ listing items sep ends =
     end = take 1 $ drop 1 ends
 
 main =
-  putStrLn $
-    listing [1, 2, 3] ";" "[]"
-    -- listing ([1, 2, 3], " ", "()")
-    -- listing ListingArgs {items=[1, 2, 3], sep=" : ", ends=""}
-    -- listing listingArgsDefaults {items=[1, 2, 3]}
-    -- join ";" (1 :: Int) (2 :: Int) (3 :: Int) "last"
+  putStrLn text
+  where
+    text = listing [1, 2, 3] ";" "[]"
+    -- text = listing ([1, 2, 3], " ", "()")
+    -- text = listing ListingArgs {items=[1, 2, 3], sep=" : ", ends=""}
+    -- text = listing listingArgsDefaults {items=[1, 2, 3]}
+    -- text = listing' ";" "<>" (1 :: Int) (2 :: Int) (3 :: Int) "last"
+    -- text = listing4 ";" "<>" ((1 :: Int), (2 :: Int), (3 :: Int), "last")
+    -- text = listing4' (";", "<>", (1 :: Int), (2 :: Int), (3 :: Int), "last")
