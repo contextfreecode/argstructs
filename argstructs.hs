@@ -53,10 +53,10 @@ listing items sep ends =
 main =
   putStrLn text
   where
-    -- text = listing [1, 2, 3] ";" "[]"
+    text = listing [1, 2, 3] ";" "[]"
     -- text = listing ([1, 2, 3], " ", "()")
     -- text = listing ListingArgs {items=[1, 2, 3], sep=" : ", ends=""}
     -- text = listing listingArgsDefaults {items=[1, 2, 3]}
-    text = listing' ";" "<>" (1 :: Int) (2 :: Int) (3 :: Int) "last"
+    -- text = listing' ";" "<>" (1 :: Int) (2 :: Int) (3 :: Int) "last"
     -- text = listing4 ";" "<>" ((1 :: Int), (2 :: Int), (3 :: Int), "last")
     -- text = listing4' (";", "<>", (1 :: Int), (2 :: Int), (3 :: Int), "last")
