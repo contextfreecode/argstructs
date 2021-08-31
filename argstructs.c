@@ -11,6 +11,28 @@ typedef struct IntSpan {
 
 #define INT_SPAN(items) ((IntSpan){sizeof items / sizeof *items, items})
 
+typedef struct ListingArgs {
+  const char* sep;
+  const char* ends;
+  IntSpan items;
+} ListingArgs;
+
+char* listing(const char* sep, const char* ends, IntSpan items);
+
+char* listing_from(ListingArgs args) {
+  return listing(args.sep, args.ends, args.items);
+}
+
+int main() {
+  int items[] = {1, 2, 3};
+  char* text = listing(" ", "()", INT_SPAN(items));
+  // char* text = listing_from((ListingArgs){"; ", "<>", INT_SPAN(items)});
+  // char* text = listing_from(
+  //     (ListingArgs){.sep = ", ", .ends = "[]", .items = INT_SPAN(items)});
+  printf("%s\n", text);
+  free(text);
+}
+
 char* listing(const char* sep, const char* ends, IntSpan items) {
   // For negative numbers in the single billions, need 12 digits max.
   assert(INT_MAX < 1e10);
@@ -43,24 +65,4 @@ char* listing(const char* sep, const char* ends, IntSpan items) {
   }
   *head = '\0';
   return buffer;
-}
-
-typedef struct ListingArgs {
-  const char* sep;
-  const char* ends;
-  IntSpan items;
-} ListingArgs;
-
-char* listing_from(ListingArgs args) {
-  return listing(args.sep, args.ends, args.items);
-}
-
-int main() {
-  int items[] = {1, 2, 3};
-  char* text = listing(" ", "()", INT_SPAN(items));
-  // char* text = listing_from((ListingArgs){"; ", "<>", INT_SPAN(items)});
-  // char* text = listing_from(
-  //     (ListingArgs){.sep = ", ", .ends = "[]", .items = INT_SPAN(items)});
-  printf("%s\n", text);
-  free(text);
 }
