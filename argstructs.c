@@ -4,6 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef enum ValueType {
+  ValueType_Int,
+  ValueType_String,
+} ValueType;
+
 typedef struct IntSpan {
   size_t length;
   int* items;
