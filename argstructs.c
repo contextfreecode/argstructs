@@ -20,63 +20,102 @@ typedef struct Item {
   };
 } Item;
 
+Item item_int(int i) { return (Item){.type = ItemType_Int, .int_item = i}; }
+
+Item item_string(const char* s) {
+  return (Item){.type = ItemType_String, .string_item = s};
+}
+
 typedef struct ItemTrail {
   size_t length;
   Item items[];
 } ItemTrail;
 
-typedef struct ListingArgsTrailing {
+typedef struct ListingArgsTrail {
   const char* sep;
   const char* ends;
   ItemTrail items;
-} ListingArgsTrailing;
+} ListingArgsTrail;
 
-typedef struct IntSpan {
+typedef struct ItemSpan {
   size_t length;
-  int* items;
-} IntSpan;
+  Item* items;
+} ItemSpan;
 
-#define INT_SPAN(items) ((IntSpan){sizeof items / sizeof *items, items})
+#define ITEM_SPAN(items) ((ItemSpan){sizeof items / sizeof *items, items})
 
 typedef struct ListingArgs {
   const char* sep;
   const char* ends;
-  IntSpan items;
+  ItemSpan items;
 } ListingArgs;
 
-char* listing(const char* sep, const char* ends, IntSpan items);
+char* listing(const char* sep, const char* ends, ItemSpan items);
 
 char* listing_from(ListingArgs args) {
   return listing(args.sep, args.ends, args.items);
 }
 
+// > note: the ABI of passing struct with a flexible array member has changed in
+// > GCC 4.4
+char* listing_trail(ListingArgsTrail* args) {
+  ItemSpan span =
+      (ItemSpan){.length = args->items.length, .items = args->items.items};
+  return listing(args->sep, args->ends, span);
+}
+
 char* listing_va(const char* sep, const char* ends, ...);
 
 int main() {
-  int items[] = {1, 2, 3};
-  // char* text = listing(" ", "()", INT_SPAN(items));
-  // char* text = listing_from((ListingArgs){"; ", "<>", INT_SPAN(items)});
-  char* text = listing_from(
-      (ListingArgs){.sep = ", ", .ends = "[]", .items = INT_SPAN(items)});
+  Item items[] = {item_int(1), item_int(2), item_string("three")};
+  char* text = listing(" ", "()", ITEM_SPAN(items));
+  // char* text = listing_from((ListingArgs){"; ", "<>", ITEM_SPAN(items)});
+  // char* text = listing_from(
+  //     (ListingArgs){.sep = "; ", .ends = "()", .items = ITEM_SPAN(items)});
   // clang-format off
-  // char* text = listing_va("...", "",
-  //     ItemType_Int, 1, ItemType_Int, 2, ItemType_Int, 3,
-  //     ItemType_String, "last", ItemType_None);
+  // char* text = listing_va(
+  //     "...", "", ItemType_Int, 1, ItemType_Int, 2, ItemType_String, "three",
+  //     ItemType_None);
   // clang-format on
   // printf("sizeof char*: %zu, int: %zu\n", sizeof(char*), sizeof(int));
   printf("%s\n", text);
   free(text);
 }
 
-char* listing(const char* sep, const char* ends, IntSpan items) {
+size_t listing_max(const char* sep, const char* ends, ItemSpan items) {
   // For negative numbers in the single billions, need 12 digits max.
   assert(INT_MAX < 1e10);
+  size_t max_int_length = 12;
   size_t sep_length = strlen(sep);
   size_t ends_length = strlen(ends);
-  size_t max_item_length = 12 + sep_length;
   size_t max_ends_length = 2;
   // Extra +1 for null char.
-  size_t max_length = max_item_length * items.length + max_ends_length + 1;
+  size_t max_length = max_ends_length + 1;
+  for (size_t i = 0; i < items.length; i += 1) {
+    Item* item = &items.items[i];
+    switch (item->type) {
+      case ItemType_Int: {
+        max_length += max_int_length;
+        break;
+      }
+      case ItemType_String: {
+        max_length += strlen(item->string_item);
+        break;
+      }
+      default: {
+        assert(false);
+      }
+    }
+    // Overdoes the last, but eh.
+    max_length += sep_length;
+  }
+  return max_length;
+}
+
+char* listing(const char* sep, const char* ends, ItemSpan items) {
+  // Prep lengths and buffer.
+  size_t ends_length = strlen(ends);
+  size_t max_length = listing_max(sep, ends, items);
   char* buffer = malloc(max_length);
   assert(buffer);
   char* head = buffer;
@@ -87,11 +126,23 @@ char* listing(const char* sep, const char* ends, IntSpan items) {
   }
   // Items
   for (size_t i = 0; i < items.length; i += 1) {
+    Item item = items.items[i];
     if (i) {
-      strcpy(head, sep);
-      head += sep_length;
+      head += sprintf(head, "%s", sep);
     }
-    head += sprintf(head, "%d", items.items[i]);
+    switch (item.type) {
+      case ItemType_Int: {
+        head += sprintf(head, "%d", item.int_item);
+        break;
+      }
+      case ItemType_String: {
+        head += sprintf(head, "%s", item.string_item);
+        break;
+      }
+      default: {
+        assert(false);
+      }
+    }
   }
   // End
   if (ends_length > 1) {
@@ -126,6 +177,9 @@ size_t listing_va_max(const char* sep, const char* ends, va_list items) {
         max_length += strlen(string);
         break;
       }
+      default: {
+        assert(false);
+      }
     }
     // Overdoes the last, but eh.
     max_length += sep_length;
@@ -141,7 +195,6 @@ char* listing_va(const char* sep, const char* ends, ...) {
   va_copy(counting_items, items);
   size_t max_length = listing_va_max(sep, ends, counting_items);
   // Prep lengths and buffer.
-  size_t sep_length = strlen(sep);
   size_t ends_length = strlen(ends);
   char* buffer = malloc(max_length);
   assert(buffer);
@@ -158,13 +211,9 @@ char* listing_va(const char* sep, const char* ends, ...) {
       goto end;
     }
     if (i) {
-      strcpy(head, sep);
-      head += sep_length;
+      head += sprintf(head, "%s", sep);
     }
     switch (type) {
-      case ItemType_None: {
-        return buffer;
-      }
       case ItemType_Int: {
         int item = va_arg(items, int);
         head += sprintf(head, "%d", item);
@@ -172,9 +221,11 @@ char* listing_va(const char* sep, const char* ends, ...) {
       }
       case ItemType_String: {
         const char* item = va_arg(items, const char*);
-        strcpy(head, item);
-        head += strlen(item);
+        head += sprintf(head, "%s", item);
         break;
+      }
+      default: {
+        assert(false);
       }
     }
   }
