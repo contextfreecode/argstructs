@@ -73,6 +73,9 @@ int main() {
   // char* text = listing_from(
   //     (ListingArgs){.sep = "; ", .ends = "()", .items = ITEM_SPAN(items)});
   // clang-format off
+  // printf("sizeof span: %zu, trail: %zu\n", sizeof(ListingArgs), sizeof(ListingArgsTrail));
+  // printf("sizeof span: %zu, trail: %zu\n", sizeof(ItemSpan), sizeof(ItemTrail));
+  // printf("sizeof char*: %zu, int: %zu\n", sizeof(char*), sizeof(int));
   // char* text = listing_va(
   //     "...", "", ItemType_Int, 1, ItemType_Int, 2, ItemType_String, "three",
   //     ItemType_None);
