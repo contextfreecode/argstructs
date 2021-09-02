@@ -44,6 +44,7 @@ int main() {
   //     ValueType_Int, 1, ValueType_Int, 2, ValueType_Int, 3,
   //     ValueType_String, "last", ValueType_None);
   // clang-format on
+  // printf("sizeof char*: %zu, int: %zu\n", sizeof(char*), sizeof(int));
   printf("%s\n", text);
   free(text);
 }
