@@ -6,11 +6,30 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef enum ValueType {
-  ValueType_None,
-  ValueType_Int,
-  ValueType_String,
-} ValueType;
+typedef enum ItemType {
+  ItemType_None,
+  ItemType_Int,
+  ItemType_String,
+} ItemType;
+
+typedef struct Item {
+  ItemType type;
+  union {
+    int int_item;
+    const char* string_item;
+  };
+} Item;
+
+typedef struct ItemTrail {
+  size_t length;
+  Item items[];
+} ItemTrail;
+
+typedef struct ListingArgsTrailing {
+  const char* sep;
+  const char* ends;
+  ItemTrail items;
+} ListingArgsTrailing;
 
 typedef struct IntSpan {
   size_t length;
@@ -41,8 +60,8 @@ int main() {
       (ListingArgs){.sep = ", ", .ends = "[]", .items = INT_SPAN(items)});
   // clang-format off
   // char* text = listing_va("...", "",
-  //     ValueType_Int, 1, ValueType_Int, 2, ValueType_Int, 3,
-  //     ValueType_String, "last", ValueType_None);
+  //     ItemType_Int, 1, ItemType_Int, 2, ItemType_Int, 3,
+  //     ItemType_String, "last", ItemType_None);
   // clang-format on
   // printf("sizeof char*: %zu, int: %zu\n", sizeof(char*), sizeof(int));
   printf("%s\n", text);
@@ -93,16 +112,16 @@ size_t listing_va_max(const char* sep, const char* ends, va_list items) {
   // Extra +1 for null char.
   size_t max_length = max_ends_length + 1;
   while (true) {
-    switch (va_arg(items, ValueType)) {
-      case ValueType_None: {
+    switch (va_arg(items, ItemType)) {
+      case ItemType_None: {
         return max_length;
       }
-      case ValueType_Int: {
+      case ItemType_Int: {
         va_arg(items, int);
         max_length += max_int_length;
         break;
       }
-      case ValueType_String: {
+      case ItemType_String: {
         const char* string = va_arg(items, const char*);
         max_length += strlen(string);
         break;
@@ -134,8 +153,8 @@ char* listing_va(const char* sep, const char* ends, ...) {
   }
   // Items
   for (size_t i = 0;; i += 1) {
-    ValueType type = va_arg(items, ValueType);
-    if (type == ValueType_None) {
+    ItemType type = va_arg(items, ItemType);
+    if (type == ItemType_None) {
       goto end;
     }
     if (i) {
@@ -143,15 +162,15 @@ char* listing_va(const char* sep, const char* ends, ...) {
       head += sep_length;
     }
     switch (type) {
-      case ValueType_None: {
+      case ItemType_None: {
         return buffer;
       }
-      case ValueType_Int: {
+      case ItemType_Int: {
         int item = va_arg(items, int);
         head += sprintf(head, "%d", item);
         break;
       }
-      case ValueType_String: {
+      case ItemType_String: {
         const char* item = va_arg(items, const char*);
         strcpy(head, item);
         head += strlen(item);
