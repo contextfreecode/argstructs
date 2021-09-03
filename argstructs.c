@@ -64,12 +64,14 @@ char* listing_trail(ListingArgsTrail* args) {
   return listing(args->sep, args->ends, span);
 }
 
-char* listing_va(const char* sep, const char* ends, ...);
+// char* listing_va(const char* sep, const char* ends, ...);
+
+char* listing_va(const char* sep, const char* ends, const char* format, ...);
 
 int main() {
   Item item_array[] = {item_int(1), item_int(2), item_string("three")};
   ItemSpan items = ITEM_SPAN(item_array);
-  char* text = listing(" ", "()", items);
+  // char* text = listing(" ", "()", items);
   // char* text = listing_from((ListingArgs){"; ", "<>", items});
   // char* text = listing_from(
   //     (ListingArgs){.sep = "; ", .ends = "()", .items = items});
@@ -81,6 +83,7 @@ int main() {
   // char* text = listing_va(
   //     "...", "", ItemType_Int, 1, ItemType_Int, 2, ItemType_String, "three",
   //     ItemType_None);
+  char* text = listing_va("...", "", "dds", 1, 2, "three");
   // clang-format on
   // printf("sizeof char*: %zu, int: %zu\n", sizeof(char*), sizeof(int));
   // -- Flexible array member --
@@ -171,52 +174,27 @@ char* listing(const char* sep, const char* ends, ItemSpan items) {
   return buffer;
 }
 
-size_t listing_va_length(va_list items) {
-  size_t length = 0;
-  while (true) {
-    switch (va_arg(items, ItemType)) {
-      case ItemType_None: {
-        return length;
-      }
-      case ItemType_Int: {
-        va_arg(items, int);
-        break;
-      }
-      case ItemType_String: {
-        va_arg(items, const char*);
-        break;
-      }
-      default: {
-        assert(false);
-      }
-    }
-    length += 1;
-  }
-  assert(false);
-}
-
-char* listing_va(const char* sep, const char* ends, ...) {
+char* listing_va(const char* sep, const char* ends, const char* format, ...) {
   // Length
-  va_list items;
-  va_start(items, ends);
-  size_t length = listing_va_length(items);
-  va_end(items);
+  size_t length = strlen(format);
   ListingArgsTrail* args =
       alloca(sizeof(ListingArgsTrail) + length * sizeof(Item));
   args->sep = sep;
   args->ends = ends;
   args->items.length = length;
   // Items
-  va_start(items, ends);
+  va_list items;
+  va_start(items, format);
   for (size_t i = 0; i < length; i += 1) {
     Item* item = &args->items.items[i];
-    item->type = va_arg(items, ItemType);
-    switch (item->type) {
-      case ItemType_Int: {
+    switch (format[i]) {
+      case 'd': {
+        item->type = ItemType_Int;
         item->int_item = va_arg(items, int);
         break;
       }
-      case ItemType_String: {
+      case 's': {
+        item->type = ItemType_String;
         item->string_item = va_arg(items, const char*);
         break;
       }
