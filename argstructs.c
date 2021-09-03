@@ -171,75 +171,53 @@ char* listing(const char* sep, const char* ends, ItemSpan items) {
   return buffer;
 }
 
-size_t listing_va_max(const char* sep, const char* ends, va_list items) {
-  // For negative numbers in the single billions, need 12 digits max.
-  assert(INT_MAX < 1e10);
-  size_t max_int_length = 12;
-  size_t sep_length = strlen(sep);
-  size_t ends_length = strlen(ends);
-  size_t max_ends_length = 2;
-  // Extra +1 for null char.
-  size_t max_length = max_ends_length + 1;
+size_t listing_va_length(va_list items) {
+  size_t length = 0;
   while (true) {
     switch (va_arg(items, ItemType)) {
       case ItemType_None: {
-        return max_length;
+        return length;
       }
       case ItemType_Int: {
         va_arg(items, int);
-        max_length += max_int_length;
         break;
       }
       case ItemType_String: {
-        const char* string = va_arg(items, const char*);
-        max_length += strlen(string);
+        va_arg(items, const char*);
         break;
       }
       default: {
         assert(false);
       }
     }
-    // Overdoes the last, but eh.
-    max_length += sep_length;
+    length += 1;
   }
   assert(false);
 }
 
 char* listing_va(const char* sep, const char* ends, ...) {
-  // Init args and find max.
+  // Length
   va_list items;
   va_start(items, ends);
-  va_list counting_items;
-  va_copy(counting_items, items);
-  size_t max_length = listing_va_max(sep, ends, counting_items);
-  // Prep lengths and buffer.
-  size_t ends_length = strlen(ends);
-  char* buffer = malloc(max_length);
-  assert(buffer);
-  char* head = buffer;
-  // Begin
-  if (ends_length) {
-    *head = ends[0];
-    head += 1;
-  }
+  size_t length = listing_va_length(items);
+  va_end(items);
+  ListingArgsTrail* args =
+      alloca(sizeof(ListingArgsTrail) + length * sizeof(Item));
+  args->sep = sep;
+  args->ends = ends;
+  args->items.length = length;
   // Items
-  for (size_t i = 0;; i += 1) {
-    ItemType type = va_arg(items, ItemType);
-    if (type == ItemType_None) {
-      goto end;
-    }
-    if (i) {
-      head += sprintf(head, "%s", sep);
-    }
-    switch (type) {
+  va_start(items, ends);
+  for (size_t i = 0; i < length; i += 1) {
+    Item* item = &args->items.items[i];
+    item->type = va_arg(items, ItemType);
+    switch (item->type) {
       case ItemType_Int: {
-        int item = va_arg(items, int);
-        head += sprintf(head, "%d", item);
+        item->int_item = va_arg(items, int);
         break;
       }
       case ItemType_String: {
-        const char* item = va_arg(items, const char*);
-        head += sprintf(head, "%s", item);
+        item->string_item = va_arg(items, const char*);
         break;
       }
       default: {
@@ -247,11 +225,7 @@ char* listing_va(const char* sep, const char* ends, ...) {
       }
     }
   }
-end:
-  if (ends_length > 1) {
-    *head = ends[1];
-    head += 1;
-  }
-  *head = '\0';
-  return buffer;
+  va_end(items);
+  // Call
+  listing_trail(args);
 }
