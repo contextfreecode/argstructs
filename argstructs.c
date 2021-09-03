@@ -67,20 +67,35 @@ char* listing_trail(ListingArgsTrail* args) {
 char* listing_va(const char* sep, const char* ends, ...);
 
 int main() {
-  Item items[] = {item_int(1), item_int(2), item_string("three")};
-  char* text = listing(" ", "()", ITEM_SPAN(items));
-  // char* text = listing_from((ListingArgs){"; ", "<>", ITEM_SPAN(items)});
+  Item item_array[] = {item_int(1), item_int(2), item_string("three")};
+  ItemSpan items = ITEM_SPAN(item_array);
+  char* text = listing(" ", "()", items);
+  // char* text = listing_from((ListingArgs){"; ", "<>", items});
   // char* text = listing_from(
-  //     (ListingArgs){.sep = "; ", .ends = "()", .items = ITEM_SPAN(items)});
+  //     (ListingArgs){.sep = "; ", .ends = "()", .items = items});
   // clang-format off
   // printf("sizeof span: %zu, trail: %zu\n", sizeof(ListingArgs), sizeof(ListingArgsTrail));
   // printf("sizeof span: %zu, trail: %zu\n", sizeof(ItemSpan), sizeof(ItemTrail));
   // printf("sizeof char*: %zu, int: %zu\n", sizeof(char*), sizeof(int));
+  // -- Varargs --
   // char* text = listing_va(
   //     "...", "", ItemType_Int, 1, ItemType_Int, 2, ItemType_String, "three",
   //     ItemType_None);
   // clang-format on
   // printf("sizeof char*: %zu, int: %zu\n", sizeof(char*), sizeof(int));
+  // -- Flexible array member --
+  // ListingArgsTrail args = (ListingArgsTrail){
+  //     .sep = ":",
+  //     .ends = "<>",
+  //     .items = (ItemTrail){.length = 1, .items = {item_int(1)}}};
+  // ListingArgsTrail* trail =
+  //     alloca(sizeof(ListingArgsTrail) + items.length * sizeof(Item));
+  // trail->sep = "/";
+  // trail->ends = "<>";
+  // trail->items.length = items.length;
+  // memcpy(trail->items.items, items.items, items.length * sizeof(Item));
+  // char* text = listing_trail(trail);
+  // -- Print & free --
   printf("%s\n", text);
   free(text);
 }
