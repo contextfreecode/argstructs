@@ -37,9 +37,9 @@ instance (Show' a, Join r) => Join (a -> r) where
 
 listing4 sep ends (a, b, c, d) = listing' sep ends a b c d
 
-uncurry6 fun (a, b, c, d, e, f) = fun a b c d e f
+curry6 fun (a, b, c, d, e, f) = fun a b c d e f
 
--- listing4' = uncurry6 listing'
+-- listing4' = curry6 listing'
 
 data Item = IntItem Int | StringItem String
 
