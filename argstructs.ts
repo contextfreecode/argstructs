@@ -43,6 +43,7 @@ function listing<Item>(items: Item[], sep: string, ends: string): string {
 
 function main() {
   const text = listing([1, 2, 3], ", ", "()");
+  // const text = listing(...[[1, 2, "three"], " ", ""] as ListingArgs);
   // const text = listing(" ", "()", 1, 2, "three");
   // const text = listing(undefined, undefined, 1, 2, "three");
   // const text = listing(...["; ", "()", 1, 2, "three"] as ListingArgs);
@@ -50,7 +51,6 @@ function main() {
   // const [a, b, c, sep, ends] = things;
   // const text = listing();
   // const text = listing([1, 2, "three"]);
-  // const text = listing(...[[1, 2, "three"], " ", ""] as ListingArgs);
   // const text = listing({items: [1, 2, "three"], sep: "; ", ends: ""});
   // const text = listing(new ListingArgsClass([1, 2, "three"]));
   // const text = listing(new ListingArgsClass2({ items: [1, 2, "three"] }));

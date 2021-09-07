@@ -4,21 +4,21 @@ import typing as tp
 
 # @dc.dataclass
 # class ListingArgs:
-#     items: list[int]
+#     items: list
 #     sep: str = ", "
 #     ends: str = "[]"
 
 
 # class ListingArgs(tp.TypedDict):
-#     items: list[int]
+#     items: list
 #     sep: str
 #     ends: str
 
 
 # class ListingArgs(tp.NamedTuple):
 #     items: list
-#     sep: str
-#     ends: str
+#     sep: str = ", "
+#     ends: str = "[]"
 
 
 ListingArgs = tuple[list, str, str]
@@ -37,7 +37,7 @@ def listing(items: list, sep: str = ", ", ends: str = "[]") -> str:
 
 def main():
     text = listing([1, 2, 3], " ", "[]")
-    # text = listing ([1, 2, 3], "/", "[]")
+    # text = listing ([1, 2, "three"], " ", "[]")
     # text = listing(*([1, 2, 3], "; ", "[]"))
     # text = listing(*tp.cast(ListingArgs, ([1, 2, 3], " ", "()")))
     # text = listing(*ListingArgs([1, 2, 3], "; ", "()"))
