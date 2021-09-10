@@ -34,6 +34,8 @@ def listing(items: list, sep: str = ", ", ends: str = "[]") -> str:
     # items = kwargs["items"]; sep = kwargs["sep"]; ends = kwargs["ends"]
     # match tp.cast(ListingArgs, kwargs):
     #     case {"items": items, "sep": sep, "ends": ends}: pass
+    # match ListingArgs(**kwargs):
+    #     case ListingArgs(items=items, ends=ends, sep=sep): pass
     #     case _: assert False
     begin = ends[:1]
     end = ends[1:2]
