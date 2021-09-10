@@ -26,13 +26,13 @@ ListingArgs = tuple[list, str, str]
 
 # def listing(*items, sep=", ", ends: str = "[]") -> str:
 # def listing(sep, *items, ends: str = "[]") -> str:
-# def listing(**args) -> str:
+# def listing(**kwargs) -> str:
 # def listing(*args) -> str:
 def listing(items: list, sep: str = ", ", ends: str = "[]") -> str:
     # items, sep, ends = tp.cast(ListingArgs, args)
-    # {items, sep, ends} = tp.cast(ListingArgs, args)
-    # items = args["items"]; sep = args["sep"]; ends = args["ends"]
-    # match tp.cast(ListingArgs, args):
+    # {items, sep, ends} = tp.cast(ListingArgs, kwargs)
+    # items = kwargs["items"]; sep = kwargs["sep"]; ends = kwargs["ends"]
+    # match tp.cast(ListingArgs, kwargs):
     #     case {"items": items, "sep": sep, "ends": ends}: pass
     #     case _: assert False
     begin = ends[:1]
