@@ -26,9 +26,15 @@ ListingArgs = tuple[list, str, str]
 
 # def listing(*items, sep=", ", ends: str = "[]") -> str:
 # def listing(sep, *items, ends: str = "[]") -> str:
+# def listing(**args) -> str:
 # def listing(*args) -> str:
 def listing(items: list, sep: str = ", ", ends: str = "[]") -> str:
     # items, sep, ends = tp.cast(ListingArgs, args)
+    # {items, sep, ends} = tp.cast(ListingArgs, args)
+    # items = args["items"]; sep = args["sep"]; ends = args["ends"]
+    # match tp.cast(ListingArgs, args):
+    #     case {"items": items, "sep": sep, "ends": ends}: pass
+    #     case _: assert False
     begin = ends[:1]
     end = ends[1:2]
     joined = sep.join(str(i) for i in items)
