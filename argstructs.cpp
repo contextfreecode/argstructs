@@ -56,79 +56,11 @@ auto listing(const ListingArgs<Item> args) -> std::string {
 //   return listing(args.items, args.sep, args.ends);
 // }
 
-auto join(std::stringstream& buffer, std::string_view sep) -> void {}
-
-template <typename Item, typename... Items>
-auto join(std::stringstream& buffer, std::string_view sep, const Item& item,
-          const Items&... items) -> void {
-  buffer << item;
-  ((buffer << sep << items), ...);
-}
-
-template <typename... Items>
-auto join(std::stringstream& buffer, std::string_view sep,
-          const std::tuple<Items...>& items) -> void {
-  std::apply([&buffer, sep](auto&... items) { join(buffer, sep, items...); },
-             items);
-}
-
-template <typename... Items>
-auto listing(std::string_view sep, std::string_view ends,
-             const std::tuple<Items...>& items) -> std::string {
-  auto buffer = std::stringstream();
-  auto end = work_ends(buffer, ends);
-  join(buffer, sep, items);
-  buffer << end;
-  return buffer.str();
-  // return listing({items...}, sep, ends);
-}
-
-template <typename... Items>
-auto listing(std::string_view sep, std::string_view ends, const Items&... items)
-    -> std::string {
-  return listing(sep, ends, std::forward_as_tuple(items...));
-}
-
-// template <typename... Items>
-// using ListingArgs = std::tuple<std::string_view, std::string_view, Items...>;
-
-// template <typename... Items>
-// auto listing(const ListingArgs<Items...>& args) -> std::string {
-//   return std::apply([](auto&... args) { return listing(args...); }, args);
-// }
-
-// template <typename... Items>
-// using ListingArgs =
-//     std::tuple<std::string_view, std::string_view, std::tuple<Items...>>;
-
-// template <typename... Items>
-// auto listing(const ListingArgs<Items...>& args) -> std::string {
-//   auto [sep, ends, items] = args;
-//   return listing(sep, ends, items);
-// }
-
-// template <typename... Items>
-// struct ListingArgs {
-//   std::string_view sep = ", ";
-//   std::string_view end = "[]";
-//   std::tuple<Items...> items;
-// };
-
-// template <typename... Items>
-// auto listing(const ListingArgs<Items...>& args) -> std::string {
-//   return listing(args.sep, args.end, args.items);
-// }
-
 auto main() -> int {
   auto text = listing({1, 2, 3}, " ", "()");
   // auto text = listing({1, 2, 3});
   // auto text = listing(ListingArgs{{1, 2, 3}, "...", ""});
   // auto text = listing(ListingArgs{{1, 2, 3}});
   // auto text = listing(ListingArgs{.items = {1, 2, 3}, .ends=""});
-  // auto text = listing(":", "<>", 1, 2, 3, "last");
-  // auto text = listing(" ", "<>");
-  // auto text = listing(ListingArgs{"/", "<>", 1, 2, 3, "last"});
-  // auto text = listing(ListingArgs{", ", "()", std::tuple{1, 2, 3}});
-  // auto text = listing(ListingArgs{.items = std::tuple{1, 2, 3}});
   std::cout << text << "\n";
 }

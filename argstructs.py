@@ -24,19 +24,12 @@ import typing as tp
 ListingArgs = tuple[list, str, str]
 
 
-# def listing(*items, sep=", ", ends: str = "[]") -> str:
-# def listing(sep, *items, ends: str = "[]") -> str:
 # def listing(**kwargs) -> str:
 # def listing(*args) -> str:
 def listing(items: list, sep: str = ", ", ends: str = "[]") -> str:
     # items, sep, ends = tp.cast(ListingArgs, args)
     # {items, sep, ends} = tp.cast(ListingArgs, kwargs)
     # items = kwargs["items"]; sep = kwargs["sep"]; ends = kwargs["ends"]
-    # match tp.cast(ListingArgs, kwargs):
-    #     case {"items": items, "sep": sep, "ends": ends}: pass
-    # match ListingArgs(**kwargs):
-    #     case ListingArgs(items=items, ends=ends, sep=sep): pass
-    #     case _: assert False
     begin = ends[:1]
     end = ends[1:2]
     joined = sep.join(str(i) for i in items)
@@ -44,22 +37,18 @@ def listing(items: list, sep: str = ", ", ends: str = "[]") -> str:
 
 
 def main():
-    text = listing([1, 2, 3], " ")
-    # text = listing ([1, 2, "three"], " ", "[]")
+    text = listing([1, 2, 3], " ", "()")
+    # text = listing ([1, 2, 3], " : ", "()")
     # text = listing(*([1, 2, 3], "; ", "[]"))
     # text = listing(*tp.cast(ListingArgs, ([1, 2, 3], " ", "()")))
     # text = listing(*ListingArgs([1, 2, 3], "; ", "()"))
-    # text = listing(items=[1, 2, 3], sep=", ", ends="()")
+    # text = listing(items=[1, 2, 3], sep=" ", ends="()")
     # text = listing(*ListingArgs(items=[1, 2, 3], sep="/", ends="()"))
     # text = listing(**{"items": [1, 2, 3], "sep": " ", "ends": "<>"})
     # text = listing(**dict(items=[1, 2, 3], sep=", ", ends="<>"))
     # text = listing(**ListingArgs(items=[1, 2, 3], sep="; ", ends="<>")._asdict())
     # text = listing(**ListingArgs(items=[1, 2, 3], sep="/", ends="<>"))
     # text = listing(**ListingArgs(items=[1, 2, 3], sep=", ", ends="").__dict__)
-    # text = listing(" ", 1, 2, 3, ends="")
-    # text = listing(sep=":", 1, 2, 3, ends="")
-    # text = listing(1, 2, 3, sep="/", ends="")
-    # text = listing(1, 2, 3)
     print(text)
 
 
