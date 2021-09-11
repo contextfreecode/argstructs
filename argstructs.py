@@ -44,7 +44,7 @@ def listing(items: list, sep: str = ", ", ends: str = "[]") -> str:
 
 
 def main():
-    text = listing([1, 2, 3], " ", "[]")
+    text = listing([1, 2, 3], " ")
     # text = listing ([1, 2, "three"], " ", "[]")
     # text = listing(*([1, 2, 3], "; ", "[]"))
     # text = listing(*tp.cast(ListingArgs, ([1, 2, 3], " ", "()")))

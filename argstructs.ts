@@ -33,7 +33,7 @@ type ListingArgs = { items: unknown[]; sep: string; ends: string };
 // function listing(...[items, sep, ends]: ListingArgs): string {
 // function listing(items: unknown[], sep = ", ", ends = "[]"): string {
 // function listing(...items: unknown[], sep: string = ", ", ends = "[]"): string {
-// function listing(sep: string = ", ", ends = "[]", ...items: unknown[]): string {
+// function listing(sep = ", ", ends = "[]", ...items: unknown[]): string {
 function listing<Item>(items: Item[], sep: string, ends: string): string {
   const begin = ends.slice(0, 1);
   const end = ends.slice(1, 2);

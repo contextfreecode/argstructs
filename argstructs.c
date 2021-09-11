@@ -71,7 +71,7 @@ char* listing_va(const char* sep, const char* ends, const char* format, ...);
 int main() {
   Item item_array[] = {item_int(1), item_int(2), item_string("three")};
   ItemSpan items = ITEM_SPAN(item_array);
-  // char* text = listing(" ", "()", items);
+  char* text = listing(" ", "()", items);
   // char* text = listing_from((ListingArgs){"; ", "<>", items});
   // char* text = listing_from(
   //     (ListingArgs){.sep = "; ", .ends = "()", .items = items});
@@ -83,7 +83,7 @@ int main() {
   // char* text = listing_va(
   //     "...", "", ItemType_Int, 1, ItemType_Int, 2, ItemType_String, "three",
   //     ItemType_None);
-  char* text = listing_va("...", "", "dds", 1, 2, "three");
+  // char* text = listing_va("...", "", "dds", 1, 2, "three");
   // clang-format on
   // printf("sizeof char*: %zu, int: %zu\n", sizeof(char*), sizeof(int));
   // -- Flexible array member --
