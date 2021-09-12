@@ -1,5 +1,5 @@
 class ListingArgsClass2 {
-  constructor(values: { items: unknown[]; sep?: string; ends?: string }) {
+  constructor(values: ListingArgs) {
     Object.assign(this, values);
   }
   items!: unknown[];
@@ -24,13 +24,10 @@ class ListingArgsClass {
 
 const listIntDefaults = Object.freeze({ sep: ", ", ends: "[]" });
 
-// type ListingArgs = { items: unknown[]; sep: string; ends: string };
-// type ListingArgs = [items: unknown[], sep?: string, ends?: string];
+// type ListingArgs = { items: unknown[]; sep?: string; ends?: string };
 type ListingArgs = [items: unknown[], sep: string, ends: string];
 
-// function listing({ items, sep, ends }: ListingArgs): string {
-// function listing(...[items, sep = ", ", ends = "[]"]: ListingArgs): string {
-// function listing(...[items, sep, ends]: ListingArgs): string {
+// function listing({ items, sep = ", ", ends = "[]" }: ListingArgs): string {
 // function listing(sep = ", ", ends = "[]", items: unknown[]): string {
 // function listing(items: unknown[], sep = ", ", ends = "[]"): string {
 function listing<Item>(items: Item[], sep: string, ends: string): string {
